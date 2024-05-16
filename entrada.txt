@@ -1,0 +1,6 @@
+var a,b,c;
+begin
+a:=2;
+b:=3;
+c:=@+b
+end.
