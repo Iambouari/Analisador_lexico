@@ -258,7 +258,6 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 break;
 
              case 13:
-                addToken(tokens, &tokenCount, ",", "simbolo_virgula", num_linha, 1);
                 flag = 0;
                 break;
 

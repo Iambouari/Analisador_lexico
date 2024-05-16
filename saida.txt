@@ -1,8 +1,6 @@
 var, var
 a, ident
-;, simbolo_ponto_virgula
 b, ident
-;, simbolo_ponto_virgula
 c, ident
 ;, simbolo_ponto_virgula
 begin, begin
