@@ -1,3 +1,4 @@
+{oi
 var a,b,c;
 begin
 a:=2;

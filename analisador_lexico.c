@@ -55,7 +55,7 @@ void addToken(Token* tokens, int* tokenCount, const char* lexema, const char* to
         tokens[*tokenCount].status = status;
         (*tokenCount)++;
     } else {
-        printf("Erro: n�mero m�ximo de tokens excedido.\n");
+        printf("Erro: n�mero m�ximo de tokens excedido.\n");
     }
 }
 
@@ -195,7 +195,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 break;
 
             case 2:
-                addToken(tokens, &tokenCount, ":=", "simbolo_atribui��o", num_linha, 1);
+                addToken(tokens, &tokenCount, ":=", "simbolo_atribui��o", num_linha, 1);
                 flag = 0;
                 break;
 
@@ -340,10 +340,48 @@ void automatoIdentificador(const char* palavra, int num_linha) {
     }
 }
 
+void automato_comentario(char* linha, int* num_linha, FILE* arquivoEntrada) {
+    int i = 0;
+    char c;
+
+    // Procura pelo início do comentário
+    while ((c = linha[i]) != '{') {
+        if (c == '\0') {
+            // Se o final da linha for alcançado sem encontrar o início do comentário, apenas retorna
+            return;
+        }
+        i++;
+    }
+
+    // Move o ponteiro de leitura para depois do '{'
+    i++;
+
+    // Lê até encontrar o fim do comentário
+    while (1) {
+        c = linha[i];
+        if (c == '\0') {
+            // Se chegar ao fim da linha, leia a próxima linha
+            if (fgets(linha, 100, arquivoEntrada) == NULL) {
+                // Se não houver mais linhas, o comentário não foi fechado corretamente
+                printf("Erro: comentário não fechado na linha %d.\n", *num_linha);//tem que trocar esse print pelo addToken
+                return;
+            }
+            (*num_linha)++;
+            i = 0;
+        } else if (c == '}') {
+            // Se encontrar o final do comentário, retorna
+            return;
+        } else {
+            i++;
+        }
+    }
+}
+
+
 void imprimeTokens(Token tokens[], int tokenCount) {
     FILE *file = fopen("saida.txt", "w");
     if (file == NULL) {
-        printf("Erro ao abrir o arquivo de sa�da\n");
+        printf("Erro ao abrir o arquivo de sa�da\n");
         return;
     }
     for (int i = 0; i < tokenCount; i++) {
@@ -369,6 +407,10 @@ int main() {
         int j = 0;
         for (int k = 0; k < tamanho_linha; k++) {
             char c = linha[k];
+            if (c == '{') {
+                // Chama automato_comentario se encontrar um '{'
+                automato_comentario(linha, &num_linha, arquivoEntrada);
+            }
             if (isDelimiter(c) || isBlank(c)) {
                 if (j > 0) {
                     palavra[j] = '\0';
