@@ -195,7 +195,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 break;
 
             case 2:
-                addToken(tokens, &tokenCount, ":=", "simbolo_atribui��o", num_linha, 1);
+                addToken(tokens, &tokenCount, ":=", "simbolo_atribuicao", num_linha, 1);
                 flag = 0;
                 break;
 
@@ -293,95 +293,145 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
     }
 }
 
-void automatoIdentificador(const char* palavra, int num_linha) {
+void automatoComentario(const char* linha, int* pos, int num_linha) {
     int s = 0;
-    int flag = 1;
-    int i = 0;
     char c;
+    char comentario[256];
+    int index = 0;
 
-    while (flag) {
-        c = palavra[i];
+    while ((c = linha[*pos]) != '\0') {
+        comentario[index++] = c;
         switch (s) {
             case 0:
-                if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+                if (c == '{') {
                     s = 1;
-                } else {
-                    s = 3;
                 }
                 break;
 
             case 1:
-                if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
+                if (c == '}') {
+                    return;
+                }
+                break;
+        }
+        (*pos)++;
+    }
+
+    comentario[index] = '\0'; // Termina a string de comentário
+
+    if (s == 1) {
+        addToken(tokens, &tokenCount, comentario, "<ERRO_COMENT>", num_linha, 0);
+    }
+}
+
+void automatoIdentificador(const char* aux, int num_linha) {
+    int s = 0;
+    int i = 0;
+    char c;
+    int flag = 1;
+
+    while (flag) {
+        c = aux[i];
+
+        switch (s) {
+            case 0:
+                if (isalpha(c)) {
                     s = 1;
-                } else if (c == '\0') {
-                    s = 2;
                 } else {
-                    s = 3;
+                    s = 2;
+                }
+                break;
+
+            case 1:
+                if (i >= (int)strlen(aux) - 1) {
+                    for (int j = 0; tabelaReservados[j].lexema != NULL; j++) {
+                        if (strcmp(tabelaReservados[j].lexema, aux) == 0) {
+                            addToken(tokens, &tokenCount, aux, tabelaReservados[j].token, num_linha, 1);
+                            return;
+                        }
+                    }
+                    addToken(tokens, &tokenCount, aux, "ident", num_linha, 1);
+                    return;
                 }
                 break;
 
             case 2:
-                for (int j = 0; tabelaReservados[j].lexema != NULL; j++) {
-                    if (strcmp(palavra, tabelaReservados[j].lexema) == 0) {
-                        addToken(tokens, &tokenCount, palavra, tabelaReservados[j].token, num_linha, 1);
-                        return;
-                    }
-                }
-                addToken(tokens, &tokenCount, palavra, "ident", num_linha, 1);
-                flag = 0;
-                break;
-
-            case 3:
-                addToken(tokens, &tokenCount, palavra, "<ERRO_LEXICO>", num_linha, 0);
-                flag = 0;
-                break;
-        }
-        i++;
-    }
-}
-
-void automato_comentario(char* linha, int* num_linha, FILE* arquivoEntrada) {
-    int i = 0;
-    char c;
-
-    // Procura pelo início do comentário
-    while ((c = linha[i]) != '{') {
-        if (c == '\0') {
-            // Se o final da linha for alcançado sem encontrar o início do comentário, apenas retorna
-            return;
-        }
-        i++;
-    }
-
-    // Move o ponteiro de leitura para depois do '{'
-    i++;
-
-    // Lê até encontrar o fim do comentário
-    while (1) {
-        c = linha[i];
-        if (c == '\0') {
-            // Se chegar ao fim da linha, leia a próxima linha
-            if (fgets(linha, 100, arquivoEntrada) == NULL) {
-                // Se não houver mais linhas, o comentário não foi fechado corretamente
-                printf("Erro: comentário não fechado na linha %d.\n", *num_linha);//tem que trocar esse print pelo addToken
+                addToken(tokens, &tokenCount, aux, "<ERRO_LEXICO>", num_linha, 0);
                 return;
+        }
+        i++;
+    }
+}
+
+void analisarLinha(const char* linha, int num_linha) {
+    int i = 0;
+    char aux[100];
+    int auxIndex = 0;
+
+    while (linha[i] != '\0') {
+        char c = linha[i];
+
+        if (isBlank(c) || c == '{' || c == '}') {
+            if (auxIndex > 0) {
+                aux[auxIndex] = '\0';
+                if (isdigit(aux[0]) || (aux[0] == '+' || aux[0] == '-') && isdigit(aux[1])) {
+                    automatoNumero(aux, num_linha);
+                } else {
+                    automatoIdentificador(aux, num_linha);
+                }
+                auxIndex = 0;
             }
-            (*num_linha)++;
-            i = 0;
-        } else if (c == '}') {
-            // Se encontrar o final do comentário, retorna
-            return;
-        } else {
+            if (c == '{' || c == '}') {
+                automatoComentario(linha, &i, num_linha);
+            }
             i++;
+            continue;
+        }
+
+        if (isDelimiter(c)) {
+            if (auxIndex > 0) {
+                aux[auxIndex] = '\0';
+                if (isdigit(aux[0]) || (aux[0] == '+' || aux[0] == '-') && isdigit(aux[1])) {
+                    automatoNumero(aux, num_linha);
+                } else {
+                    automatoIdentificador(aux, num_linha);
+                }
+                auxIndex = 0;
+            }
+
+            automatoOperadores(c, linha, num_linha, i);
+            i++;
+            continue;
+        }
+
+        aux[auxIndex++] = c;
+        i++;
+    }
+
+    if (auxIndex > 0) {
+        aux[auxIndex] = '\0';
+        if (isdigit(aux[0]) || (aux[0] == '+' || aux[0] == '-') && isdigit(aux[1])) {
+            automatoNumero(aux, num_linha);
+        } else {
+            automatoIdentificador(aux, num_linha);
         }
     }
 }
 
+void analisarArquivo(FILE* arquivo) {
+    char linha[256];
+    int num_linha = 1;
+
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        analisarLinha(linha, num_linha);
+        num_linha++;
+    }
+}
 
 void imprimeTokens(Token tokens[], int tokenCount) {
     FILE *file = fopen("saida.txt", "w");
     if (file == NULL) {
-        printf("Erro ao abrir o arquivo de sa�da\n");
+        printf("Erro ao abrir o arquivo de saida\n");
         return;
     }
     for (int i = 0; i < tokenCount; i++) {
@@ -391,46 +441,15 @@ void imprimeTokens(Token tokens[], int tokenCount) {
 }
 
 int main() {
-    FILE *arquivoEntrada = fopen("entrada.txt", "r");
-    if (arquivoEntrada == NULL) {
-        printf("Erro ao abrir o arquivo de entrada.\n");
+    FILE* arquivo = fopen("entrada.txt", "r");
+    if (!arquivo) {
+        printf("Erro ao abrir arquivo.\n");
         return 1;
     }
 
-    char linha[100];
-    int num_linha = 0;
+    analisarArquivo(arquivo);
 
-    while (fgets(linha, sizeof(linha), arquivoEntrada) != NULL) {
-        num_linha++;
-        int tamanho_linha = strlen(linha);
-        char palavra[100];
-        int j = 0;
-        for (int k = 0; k < tamanho_linha; k++) {
-            char c = linha[k];
-            if (c == '{') {
-                // Chama automato_comentario se encontrar um '{'
-                automato_comentario(linha, &num_linha, arquivoEntrada);
-            }
-            if (isDelimiter(c) || isBlank(c)) {
-                if (j > 0) {
-                    palavra[j] = '\0';
-                    if (isdigit(palavra[0]) || (palavra[0] == '+' || palavra[0] == '-') && isdigit(palavra[1])) {
-                        automatoNumero(palavra, num_linha);
-                    } else {
-                        automatoIdentificador(palavra, num_linha);
-                    }
-                    j = 0;
-                }
-                if (isDelimiter(c)) {
-                    automatoOperadores(c, linha, num_linha, k);
-                }
-            } else {
-                palavra[j++] = c;
-            }
-        }
-    }
-
-    fclose(arquivoEntrada);
+    fclose(arquivo);
 
     imprimeTokens(tokens, tokenCount);
 
