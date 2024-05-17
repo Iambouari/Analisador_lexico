@@ -13,7 +13,6 @@ typedef struct {
     int status;
 } Token;
 
-// Tabela que contem as palavras reservadas
 typedef struct {
     const char* lexema;
     const char* token;
@@ -37,7 +36,11 @@ TabelaReservados tabelaReservados[] = {
     {"do", "simbolo_do"},
     {"to", "simbolo_to"},
     {"for", "simbolo_for"},
-    {NULL, NULL}  // Marca o fim da tabela
+    {"uses", "simbolo_uses"},
+    {"crt", "simbolo_crt"},
+    {"until", "simbolo_until"},
+    {"repeat", "simbolo_repeat"},
+    {NULL, NULL}
 };
 
 const char* operadores[] = {
@@ -55,7 +58,7 @@ void addToken(Token* tokens, int* tokenCount, const char* lexema, const char* to
         tokens[*tokenCount].status = status;
         (*tokenCount)++;
     } else {
-        printf("Erro: n�mero m�ximo de tokens excedido.\n");
+        printf("Erro: numero maximo de tokens excedido.\n");
     }
 }
 
@@ -183,6 +186,10 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                     s = 17;
                 } else if (c_aux == '-') {
                     s = 18;
+                } else if (c_aux == '(') {
+                    s = 19;
+                } else if (c_aux == ')') {
+                    s = 20;
                 }
                 break;
 
@@ -287,6 +294,16 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 break;
 
             case 19:
+                addToken(tokens, &tokenCount, "(", "simbolo_par", num_linha, 1);
+                flag = 0;
+                break;
+
+            case 20:
+                addToken(tokens, &tokenCount, ")", "simbolo_par", num_linha, 1);
+                flag = 0;
+                break;
+
+            case 21:
                 flag = 0;
         }
         i++;
