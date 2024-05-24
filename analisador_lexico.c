@@ -361,15 +361,19 @@ void automatoIdentificador(const char* aux, int num_linha) {
                 break;
 
             case 1:
-                if (i >= (int)strlen(aux) - 1) {
-                    for (int j = 0; tabelaReservados[j].lexema != NULL; j++) {
-                        if (strcmp(tabelaReservados[j].lexema, aux) == 0) {
-                            addToken(tokens, &tokenCount, aux, tabelaReservados[j].token, num_linha, 1);
-                            return;
+                if (isalnum(c) || c == '_') {
+                    if (i >= (int)strlen(aux) - 1) {
+                        for (int j = 0; tabelaReservados[j].lexema != NULL; j++) {
+                            if (strcmp(tabelaReservados[j].lexema, aux) == 0) {
+                                addToken(tokens, &tokenCount, aux, tabelaReservados[j].token, num_linha, 1);
+                                return;
+                            }
                         }
+                        addToken(tokens, &tokenCount, aux, "ident", num_linha, 1);
+                        return;
                     }
-                    addToken(tokens, &tokenCount, aux, "ident", num_linha, 1);
-                    return;
+                } else {
+                    s = 2;
                 }
                 break;
 
@@ -380,6 +384,7 @@ void automatoIdentificador(const char* aux, int num_linha) {
         i++;
     }
 }
+
 
 void analisarLinha(const char* linha, int num_linha) {
     int i = 0;
