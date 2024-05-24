@@ -19,6 +19,7 @@ typedef struct {
 } TabelaReservados;
 
 TabelaReservados tabelaReservados[] = {
+    {"call","simbolo_call"},
     {"program", "simbolo_program"},
     {"var", "var"},
     {"integer", "simbolo_tipo"},
@@ -458,9 +459,17 @@ void imprimeTokens(Token tokens[], int tokenCount) {
 }
 
 int main() {
-    FILE* arquivo = fopen("entrada.txt", "r");
+    char nomeArquivo[256];
+
+    printf("Digite o nome do arquivo: ");
+    if (fgets(nomeArquivo, sizeof(nomeArquivo), stdin) != NULL) {
+        // Remover o caractere de nova linha no final, se houver
+        nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0';
+    }
+
+    FILE* arquivo = fopen(nomeArquivo, "r");
     if (!arquivo) {
-        printf("Erro ao abrir arquivo.\n");
+        printf("Erro ao abrir arquivo: %s\n", nomeArquivo);
         return 1;
     }
 
