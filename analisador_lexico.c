@@ -346,11 +346,8 @@ void automatoIdentificador(const char* aux, int num_linha) {
     int s = 0;
     int i = 0;
     char c;
-    int flag = 1;
 
-    while (flag) {
-        c = aux[i];
-
+    while ((c = aux[i]) != '\0') {
         switch (s) {
             case 0:
                 if (isalpha(c)) {
@@ -361,18 +358,7 @@ void automatoIdentificador(const char* aux, int num_linha) {
                 break;
 
             case 1:
-                if (isalnum(c) || c == '_') {
-                    if (i >= (int)strlen(aux) - 1) {
-                        for (int j = 0; tabelaReservados[j].lexema != NULL; j++) {
-                            if (strcmp(tabelaReservados[j].lexema, aux) == 0) {
-                                addToken(tokens, &tokenCount, aux, tabelaReservados[j].token, num_linha, 1);
-                                return;
-                            }
-                        }
-                        addToken(tokens, &tokenCount, aux, "ident", num_linha, 1);
-                        return;
-                    }
-                } else {
+                if (!(isalnum(c) || c == '_')) {
                     s = 2;
                 }
                 break;
@@ -383,8 +369,19 @@ void automatoIdentificador(const char* aux, int num_linha) {
         }
         i++;
     }
-}
 
+    if (s == 1) {
+        for (int j = 0; tabelaReservados[j].lexema != NULL; j++) {
+            if (strcmp(tabelaReservados[j].lexema, aux) == 0) {
+                addToken(tokens, &tokenCount, aux, tabelaReservados[j].token, num_linha, 1);
+                return;
+            }
+        }
+        addToken(tokens, &tokenCount, aux, "ident", num_linha, 1);
+    } else {
+        addToken(tokens, &tokenCount, aux, "<ERRO_LEXICO>", num_linha, 0);
+    }
+}
 
 void analisarLinha(const char* linha, int num_linha) {
     int i = 0;
@@ -468,7 +465,6 @@ int main() {
 
     printf("Digite o nome do arquivo: ");
     if (fgets(nomeArquivo, sizeof(nomeArquivo), stdin) != NULL) {
-        // Remover o caractere de nova linha no final, se houver
         nomeArquivo[strcspn(nomeArquivo, "\n")] = '\0';
     }
 
