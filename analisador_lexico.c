@@ -1,22 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#define MAX_TOKENS 1000
-
-typedef struct {
-    char lex;
-    char lexema[100];
-    char token[100];
-    int linha;
-    int status;
-} Token;
-
-typedef struct {
-    const char* lexema;
-    const char* token;
-} TabelaReservados;
+#include "analisador_lexico.h"
 
 TabelaReservados tabelaReservados[] = {
     {"CALL","simbolo_CALL"},
@@ -48,7 +30,6 @@ const char* operadores[] = {
     ";", ":", "+", "-", "*", "/", "(", ")", "=", ",", ">", "<", "."
 };
 
-Token tokens[MAX_TOKENS];
 int tokenCount = 0;
 
 void addToken(Token* tokens, int* tokenCount, const char* lexema, const char* token, int linha, int status) {
@@ -459,7 +440,7 @@ void imprimeTokens(Token tokens[], int tokenCount) {
     }
     fclose(file);
 }
-
+/*
 int main() {
     char nomeArquivo[256];
 
@@ -482,3 +463,4 @@ int main() {
 
     return 0;
 }
+*/
