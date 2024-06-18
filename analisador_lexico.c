@@ -135,6 +135,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
 
     while (flag) {
         c_aux = linha[i];
+        printf("%d\n", s);
 
         switch (s) {
             case 0:
@@ -146,13 +147,13 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                     if (linha[i - 1] != ':') {
                         s = 8;
                     } else {
-                        s = 19;
+                        //s = 19;
                     }
                 } else if (c_aux == '>') {
                     if (linha[i - 1] != '<') {
                         s = 9;
                     } else {
-                        s = 19;
+                        //s = 19;
                     }
                 } else if (c_aux == '/') {
                     s = 12;
@@ -173,7 +174,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 } else if (c_aux == ')') {
                     s = 20;
                 }
-                //break;
+                break;
 
             case 1:
                 if (c_aux == '=') {
