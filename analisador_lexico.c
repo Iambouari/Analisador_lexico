@@ -173,7 +173,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 } else if (c_aux == ')') {
                     s = 20;
                 }
-                break;
+                //break;
 
             case 1:
                 if (c_aux == '=') {
@@ -287,6 +287,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
 
             case 21:
                 flag = 0;
+                break;
         }
         i++;
     }
