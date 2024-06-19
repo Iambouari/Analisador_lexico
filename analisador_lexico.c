@@ -135,7 +135,6 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
 
     while (flag) {
         c_aux = linha[i];
-        printf("%d\n", s);
 
         switch (s) {
             case 0:
