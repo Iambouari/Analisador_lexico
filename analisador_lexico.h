@@ -30,7 +30,15 @@ Token tokens[MAX_TOKENS];
 int tokenCount;
 
 
-void analisarArquivo(FILE* arquivo);
-void imprimeTokens(Token tokens[], int tokenCount);
+
+int isBlank(char c);
+int isDelimiter(char c);
+void automatoNumero(const char* aux, int num_linha);
+void automatoOperadores(char c, const char* linha, int num_linha, int posicao);
+void automatoComentario(const char* linha, int* pos, int num_linha);
+void automatoIdentificador(const char* aux, int num_linha);
+
+// void analisarArquivo(FILE* arquivo);
+// void imprimeTokens(Token tokens[], int tokenCount);
 
 #endif //ANALISADOR_LEXICO_H

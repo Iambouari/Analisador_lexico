@@ -3,6 +3,19 @@
 #include <string.h>
 #include <ctype.h>
 #include "analisador_lexico.h"
+#include "analisador_arquivo.h"
+
+void imprimeTokens(Token tokens[], int tokenCount) {
+    FILE *file = fopen("saida.txt", "w");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo de saida\n");
+        return;
+    }
+    for (int i = 0; i < tokenCount; i++) {
+        fprintf(file, "%s, %s\n", tokens[i].lexema, tokens[i].token);
+    }
+    fclose(file);
+}
 
 int main() {
     char nomeArquivo[256];

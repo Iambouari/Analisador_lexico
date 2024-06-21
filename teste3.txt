@@ -1,0 +1,2 @@
+CONST a:=2;
+VAR a;
