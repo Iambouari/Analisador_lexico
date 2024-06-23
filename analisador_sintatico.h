@@ -21,6 +21,8 @@ typedef struct {
     int status;
 } Comando;
 
+int aux_parenteses;
+
 // typedef struct {
 //     const char* lexema;
 //     const char* token;

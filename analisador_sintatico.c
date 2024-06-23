@@ -1,5 +1,11 @@
 #include "analisador_sintatico.h"
 
+void erro_parenteses(){
+    if(aux_parenteses != 0){
+        printf("\n\nfaltou fechar alguns parenteses\n\n");
+    }
+}
+
 int var_c(int *cont){
     (*cont)++;
     int chave = 0;
@@ -80,35 +86,108 @@ void declaracao(int *i){
 
 }
 
+int expressao_recursiva(int *cont){
+
+    if (strcmp(tokens[*cont].token, "simbolo_menos") == 0 || 
+    strcmp(tokens[*cont].token, "simbolo_mais") == 0 ||
+    strcmp(tokens[*cont].token, "simbolo_mult") == 0 ||
+    strcmp(tokens[*cont].token, "simbolo_dividir") == 0){
+
+        (*cont)++;
+        if(strcmp(tokens[*cont].token, "ident") == 0){
+            (*cont)++;
+        }
+
+        if(strcmp(tokens[*cont].token, "numero") == 0){
+            (*cont)++;
+            if(strcmp(tokens[*cont].token, "simbolo_ponto") == 0){
+                (*cont)++;
+                if(strcmp(tokens[*cont].token, "numero") == 0){
+                    (*cont)++;
+                }else{
+                    printf("numero real mal formatado\n");
+                }
+            }
+        }
+        expressao_recursiva(cont);
+    }
+    if(strcmp(tokens[*cont].token, "simbolo_abre_par") == 0){
+        aux_parenteses++;
+        expressao(cont);
+    }
+
+}
+
 int expressao(int *cont){
     (*cont)++;
+    int aux_sinal = 0;
+
+    if (strcmp(tokens[*cont].token, "simbolo_menos") == 0 ||
+    strcmp(tokens[*cont].token, "simbolo_mais") == 0 ){
+        aux_sinal = 1;
+        (*cont)++;
+    }
+    
+    if(strcmp(tokens[*cont].token, "ident") == 0){
+        aux_sinal = 0;
+        (*cont)++;
+    }
 
     
+
+    if(strcmp(tokens[*cont].token, "numero") == 0){
+        aux_sinal = 0;
+        (*cont)++;
+        if(strcmp(tokens[*cont].token, "simbolo_ponto") == 0){
+            (*cont)++;
+            if(strcmp(tokens[*cont].token, "numero") == 0){
+                (*cont)++;
+            }else{
+                printf("numero real mal formatado\n");
+            }
+        }
+    }
+
+    if(strcmp(tokens[*cont].token, "simbolo_abre_par") == 0){
+        aux_parenteses++;
+        aux_sinal = 0;
+        expressao(cont);
+    }
+
+    if(aux_sinal == 1){
+        printf("erro\n");
+    }else{
+        expressao_recursiva(cont);
+    }
+
+    if(strcmp(tokens[*cont].token, "simbolo_fecha_par") == 0){
+        if(aux_parenteses > 0){
+            aux_parenteses--;
+            expressao(cont);
+        }else{
+            printf("fechou mais parenteses do que existe");
+        }
+    }
+
+
 }
 
 int condicao(int *cont){
     int chave = 0;
     expressao(cont);
-    (*cont)++;
-
+    
     if (strcmp(tokens[(*cont)].token, "simbolo_menor_igual") == 0){
         chave = 1;
-        (*cont)++;
     }else if(strcmp(tokens[(*cont)].token, "simbolo_dif") == 0){
         chave = 1;
-        (*cont)++;
     }else if(strcmp(tokens[(*cont)].token, "simbolo_menor") == 0){
         chave = 1;
-        (*cont)++;
     }else if(strcmp(tokens[(*cont)].token, "simbolo_igual") == 0){
         chave = 1;
-        (*cont)++;
     }else if(strcmp(tokens[(*cont)].token, "simbolo_maior_igual") == 0){
         chave = 1;
-        (*cont)++;
     }else if(strcmp(tokens[(*cont)].token, "simbolo_maior") == 0){
         chave = 1;
-        (*cont)++;
     }
 
     if(chave == 1){
@@ -117,7 +196,8 @@ int condicao(int *cont){
     }else{
         printf("expressao ");
     }
-
+    
+    erro_parenteses();
     return SUCESSO;
 
 
@@ -132,7 +212,7 @@ int cmd(int *cont, int *chave){
         (*cont)++;
         if(strcmp(tokens[*cont].token, "simbolo_atribuicao") == 0){
             expressao(cont);
-            (*cont)++;
+            erro_parenteses();
             if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){   
                 printf("ident := expressao;\n");
                 (*cont)++;
@@ -150,10 +230,9 @@ int cmd(int *cont, int *chave){
     if(strcmp(tokens[*cont].token, "simbolo_CALL") == 0){
         (*cont)++;
         if(strcmp(tokens[*cont].token, "ident") == 0){
-            printf("call ident\n");
             (*cont)++;
-            if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){   
-                printf("ident := expressao;\n");
+            if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){       
+                printf("call ident\n");
                 (*cont)++;
             }else{
                 printf("erro sintatico 9\n");
@@ -236,7 +315,7 @@ int sintatico(int *num_token){
             return ERRO;
         }
     }
-    
+
 
     if(strcmp(tokens[*num_token].token, "END") == 0){
         printf("%s\n", tokens[*num_token].token);

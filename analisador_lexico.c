@@ -278,12 +278,12 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 break;
 
             case 19:
-                addToken(tokens, &tokenCount, "(", "simbolo_par", num_linha, 1);
+                addToken(tokens, &tokenCount, "(", "simbolo_abre_par", num_linha, 1);
                 flag = 0;
                 break;
 
             case 20:
-                addToken(tokens, &tokenCount, ")", "simbolo_par", num_linha, 1);
+                addToken(tokens, &tokenCount, ")", "simbolo_fecha_par", num_linha, 1);
                 flag = 0;
                 break;
 

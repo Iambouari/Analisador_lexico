@@ -1,11 +1,10 @@
 VAR a;
 BEGIN
 	CALL a;
-    y := 3;
-    IF x = 3 THEN
+    y := 30;
+    IF x = + THEN
         BEGIN
         a := 4;
-        a := 3;
         WHILE x DO
             BEGIN
             a := 4;
