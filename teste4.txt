@@ -1,8 +1,8 @@
 VAR a;
 BEGIN
 	CALL a;
-    y := +3;
-    IF (y < ((3+4)*3)) THEN
+    y := +;
+    IF y < 3 THEN
         BEGIN
         END
 END.

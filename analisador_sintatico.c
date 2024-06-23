@@ -155,7 +155,7 @@ int expressao(int *cont){
     }
 
     if(aux_sinal == 1){
-        printf("erro\n");
+        printf("erro de sinal sem numero\n");
     }else{
         expressao_recursiva(cont);
     }
@@ -208,7 +208,7 @@ int cmd(int *cont, int *chave){
     //(*cont)++;
 
     //ident := expressão
-    if(strcmp(tokens[*cont].token, "ident") == 0){
+    if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
         (*cont)++;
         if(strcmp(tokens[*cont].token, "simbolo_atribuicao") == 0){
             expressao(cont);
@@ -222,7 +222,7 @@ int cmd(int *cont, int *chave){
             // (*cont)++;
         }else{
             printf("erro sintatico 6\n");
-
+            (*cont++);
         }
     }
 
@@ -236,6 +236,7 @@ int cmd(int *cont, int *chave){
                 (*cont)++;
             }else{
                 printf("erro sintatico 9\n");
+                (*cont)++;
             }
         }else{
             printf("erro sintatico 8\n");
@@ -257,9 +258,11 @@ int cmd(int *cont, int *chave){
                 cmd(cont, chave);
             }else{
                 printf("erro sintatico 12\n");
+                (*cont)++;
             }
         }else{
             printf("erro sintatico 10\n");
+            (*cont)++;
         }
     }
 
@@ -278,9 +281,11 @@ int cmd(int *cont, int *chave){
                 cmd(cont, chave);
             }else{
                 printf("erro sintatico 13\n");
+                (*cont)++;
             }
         }else{
             printf("erro sintatico 11\n");
+            (*cont)++;
         }
     }
 
@@ -304,15 +309,17 @@ int sintatico(int *num_token){
     if(strcmp(tokens[*num_token].token, "BEGIN") == 0){
         printf("%s\n", tokens[*num_token].token);
         (*num_token)++;
-    }//else{
-    //     printf("erro sintatico\n");
-    //     return ERRO;
-    // }
+    }else{
+        printf("erro sintatico faltou BEGIN\n");
+        // chave_recursividade++;
+        (*num_token)++;
+        //return ERRO;
+    }
     while (/*strcmp(tokens[*num_token].token, "END") != 0 && */chave_recursividade != -1){  
         cmd(num_token, &chave_recursividade);
         if(strcmp(tokens[*num_token].token, "simbolo_ponto") == 0){
             printf("erro sintatico faltou um END\n");
-            return ERRO;
+            //return ERRO;
         }
     }
 
