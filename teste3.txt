@@ -2,4 +2,5 @@ VAR a;
 BEGIN
 	CALL a;
     y := 3;
+    IF x = 3 
 END.

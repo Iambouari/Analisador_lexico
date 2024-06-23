@@ -91,28 +91,31 @@ int condicao(int *cont){
     expressao(cont);
     (*cont)++;
 
-    if (strcmp(tokens[(*cont)].lexema, "simbolo_menor_igual") == 0){
+    if (strcmp(tokens[(*cont)].token, "simbolo_menor_igual") == 0){
         chave = 1;
         (*cont)++;
-    }else if(strcmp(tokens[(*cont)].lexema, "simbolo_dif") == 0){
+    }else if(strcmp(tokens[(*cont)].token, "simbolo_dif") == 0){
         chave = 1;
         (*cont)++;
-    }else if(strcmp(tokens[(*cont)].lexema, "simbolo_menor") == 0){
+    }else if(strcmp(tokens[(*cont)].token, "simbolo_menor") == 0){
         chave = 1;
         (*cont)++;
-    }else if(strcmp(tokens[(*cont)].lexema, "simbolo_igual") == 0){
+    }else if(strcmp(tokens[(*cont)].token, "simbolo_igual") == 0){
         chave = 1;
         (*cont)++;
-    }else if(strcmp(tokens[(*cont)].lexema, "simbolo_maior_igual") == 0){
+    }else if(strcmp(tokens[(*cont)].token, "simbolo_maior_igual") == 0){
         chave = 1;
         (*cont)++;
-    }else if(strcmp(tokens[(*cont)].lexema, "simbolo_maior") == 0){
+    }else if(strcmp(tokens[(*cont)].token, "simbolo_maior") == 0){
         chave = 1;
         (*cont)++;
     }
 
     if(chave == 1){
+        printf("expressao condicao expressao ");
         expressao(cont);
+    }else{
+        printf("expressao ");
     }
 
     return SUCESSO;
@@ -133,8 +136,13 @@ int cmd(int *cont){
             if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){   
                 printf("ident := expressao;\n");
                 (*cont)++;
+            }else{
+                printf("erro sintatico 7\n");
             }
             // (*cont)++;
+        }else{
+            printf("erro sintatico 6\n");
+
         }
     }
 
@@ -147,28 +155,38 @@ int cmd(int *cont){
             if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){   
                 printf("ident := expressao;\n");
                 (*cont)++;
+            }else{
+                printf("erro sintatico 9\n");
             }
+        }else{
+            printf("erro sintatico 8\n");
         }
     }
 
     //if condicao THEN comando
     if(strcmp(tokens[*cont].token, "IF") == 0){
+        printf("%s ", tokens[*cont].token);
         condicao(cont);
-        (*cont)++;
+
         if(strcmp(tokens[*cont].token, "THEN") == 0){
-            printf("if condicao THEN comando\n");
+            printf("%s\n", tokens[*cont].token);
             (*cont)++;
             cmd(cont);
+        }else{
+            printf("erro sintatico 10\n");
         }
     }
 
     //while condicao DO comando
     if(strcmp(tokens[*cont].token, "WHILE") == 0){
         condicao(cont);
-        (*cont)++;
+
         if(strcmp(tokens[*cont].token, "DO") == 0){
             printf("while condicao DO comando\n");
+            (*cont)++;
             cmd(cont);
+        }else{
+            printf("erro sintatico 11\n");
         }
     }
 
