@@ -1,6 +1,6 @@
 #include "analisador_arquivo.h"
 
-void analisarLinha(const char* linha, int num_linha) {
+void analisarLinha(const char* linha, int num_linha, int *aux_sintatico) {
     int i = 0;
     char aux[100];
     int auxIndex = 0;
@@ -53,7 +53,7 @@ void analisarLinha(const char* linha, int num_linha) {
             automatoIdentificador(aux, num_linha);
         }
     }
-    sintatico();
+    sintatico(aux_sintatico);
 }
 
 
@@ -120,9 +120,10 @@ void analisarLinha(const char* linha, int num_linha) {
 void analisarArquivo(FILE* arquivo) {
     char linha[256];
     int num_linha = 1;
+    int aux_sintitico = 0;
 
     while (fgets(linha, sizeof(linha), arquivo)) {
-        analisarLinha(linha, num_linha);
+        analisarLinha(linha, num_linha, &aux_sintitico);
         num_linha++;
     }
 }

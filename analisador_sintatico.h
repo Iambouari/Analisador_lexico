@@ -35,6 +35,6 @@ typedef struct {
 // int tokenCount;
 
 
-int sintatico();
+int sintatico(int *num_token);
 
 #endif //ANALISADOR_LEXICO_H

@@ -1,2 +1,5 @@
-CONST a:=2;
 VAR a;
+BEGIN
+	CALL a;
+    y := 3;
+END.
