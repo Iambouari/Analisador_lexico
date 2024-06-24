@@ -3,4 +3,4 @@ erro lexico linha 7: =>
 erro lexico linha 12: {testando comentário não fechado
 
 erro sintatico linha 2: Faltou BEGIN sugestão: BEGIN
-erro sintatico linha 10: faltou fechar comentario sugestão: {}
+erro sintatico linha 13: faltou fechar comentario sugestão: {}

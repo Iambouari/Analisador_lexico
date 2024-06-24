@@ -266,6 +266,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 break;
 
             case 13:
+                addToken(tokens, &tokenCount, ",", "simbolo_virgula", num_linha, 1);
                 flag = 0;
                 break;
 
@@ -339,6 +340,7 @@ void automatoComentario(const char* linha, int* pos, int num_linha) {
 
             case 1:
                 if (c == '}') {
+                    addToken(tokens, &tokenCount, comentario, "COMENTARIO", num_linha, 1);
                     return;
                 }
                 break;

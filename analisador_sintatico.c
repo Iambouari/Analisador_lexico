@@ -40,6 +40,11 @@ int var_c(int *cont){
             (*cont)++;
             if(strcmp(tokens[*cont].token, "numero") == 0){
                 (*cont)++;
+                if(strcmp(tokens[*cont].token, "simbolo_virgula") == 0){
+                    chave = 0;
+                    (*cont)++;
+                    continue;
+                }
             }else{
                 addSintToken("Faltou numero atribuido a constante", "CONST ident := numero;", 0, 1);
                 return ERRO;//erro
@@ -51,9 +56,13 @@ int var_c(int *cont){
     }
 
 
-    if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0 && chave){
-        addSintToken("", "CONST ident := numero;", 1, 1);
-        return SUCESSO;
+    if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){
+        if(chave){
+            addSintToken("", "CONST ident := numero;", 1, 1);
+            return SUCESSO;
+        }else{
+            addSintToken("Faltou ident", "CONST ident := numero;", 0, 1);
+        }
     }else{
         addSintToken("Faltou ponto e virgula", "CONST ident := numero;", 0, 1);
         return ERRO;//erro
@@ -66,10 +75,19 @@ int var_v(int *cont){
     while(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
         (*cont)++;
         chave = 1;
+        if(strcmp(tokens[*cont].token, "simbolo_virgula") == 0){
+            chave = 0;
+            (*cont)++;
+            continue;
+        }
     }
-    if(chave && (strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){ 
-        addSintToken("", "VAR ident", 1, 1);
-        return SUCESSO;
+    if((strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){ 
+        if(chave){
+            addSintToken("", "VAR ident;", 1, 1);
+            return SUCESSO;
+        }else{
+            addSintToken("Faltou ident", "VAR ident;", 0, 1);
+        }
     }else{
         addSintToken("Faltou ponto e virgula", "VAR ident;", 0, 1);
         return ERRO;
@@ -88,6 +106,7 @@ void var_p(int *cont){
 
     if(chave && (strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){
         addSintToken("", "PROCEDURE ident", 1, 1);
+        statusProcedimento = 1;
         bloco(cont);
         return SUCESSO;
     }else{
@@ -307,7 +326,11 @@ int cmd(int *cont, int *chave){
     }else if(strcmp(tokens[*cont].token, "<ERRO_COMENT>") == 0){
         addSintToken("faltou fechar comentario", "{}",  0, 1);
         (*cont)++;
-    }else if(strcmp(tokens[*cont].token, "END") == 0 && *chave > 1){
+    }else if(strcmp(tokens[*cont].token, "COMENTARIO") == 0){
+        addSintToken("faltou fechar comentario", "{}",  1, 1);
+        (*cont)++;
+    }
+    else if(strcmp(tokens[*cont].token, "END") == 0 && *chave > 1){
         addSintToken("", "END", 1, 1);
         (*chave)--;
         (*cont)++;
@@ -347,7 +370,7 @@ int bloco(int *num_token){
     }
 
 
-    if(strcmp(tokens[*num_token].token, "END") == 0){
+    if(strcmp(tokens[*num_token].token, "END") == 0 && statusProcedimento == 0){
         (*num_token)++;
         if (strcmp(tokens[*num_token].token, "simbolo_ponto") == 0) {
         addSintToken("", "END.", 1, 1);
@@ -364,6 +387,7 @@ int bloco(int *num_token){
 int sintatico(int *num_token){
     linha_analisada = 1;
     termo_Analisado = 0;
+    statusProcedimento = 0;
     bloco(num_token);
     // declaracao(num_token);
     // int chave_recursividade = 0;

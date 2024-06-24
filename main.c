@@ -13,7 +13,9 @@ void imprimeTokens(Token tokens[], int tokenCount) {
         return;
     }
     for (int i = 0; i < tokenCount; i++) {
-        fprintf(file, "%s, %s\n", tokens[i].lexema, tokens[i].token);
+        if(strcmp(tokens[i].token, "COMENTARIO") != 0 && strcmp(tokens[i].token, "simbolo_virgula") != 0){
+            fprintf(file, "%s, %s\n", tokens[i].lexema, tokens[i].token);
+        }
     }
     fclose(file);
 }

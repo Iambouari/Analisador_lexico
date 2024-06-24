@@ -23,6 +23,7 @@ typedef struct {
 Comando comandos[MAX_TOKENS];
 int linha_analisada;
 int termo_Analisado;
+int statusProcedimento;
 
 int aux_parenteses;
 

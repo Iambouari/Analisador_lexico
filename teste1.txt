@@ -7,7 +7,7 @@ BEGIN
 	a:=x;
 	b := y ;
 	c:=a+b
-END
+END.
 
 BEGIN
 	x=2.3; {erro de tipo de número}
