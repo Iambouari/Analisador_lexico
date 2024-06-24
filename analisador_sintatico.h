@@ -14,12 +14,14 @@
 #define SUCESSO 1
 
 typedef struct {
-    char lex;
-    char nome[100];
-    char comando[100];
+    char msgErro[100];
+    char cmdEsperado[100];
     int linha;
     int status;
 } Comando;
+
+Comando comandos[MAX_TOKENS];
+int linha_analisada;
 
 int aux_parenteses;
 

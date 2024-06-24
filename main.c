@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "analisador_lexico.h"
 #include "analisador_arquivo.h"
+#include "analisador_sintatico.h"
 
 void imprimeTokens(Token tokens[], int tokenCount) {
     FILE *file = fopen("saida.txt", "w");
@@ -14,6 +15,26 @@ void imprimeTokens(Token tokens[], int tokenCount) {
     for (int i = 0; i < tokenCount; i++) {
         fprintf(file, "%s, %s\n", tokens[i].lexema, tokens[i].token);
     }
+    fclose(file);
+}
+
+void imprimeTokensT2(Token tokens[], int tokenCount) {
+    FILE *file = fopen("saida2.txt", "w");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo de saida\n");
+        return;
+    }
+    for (int i = 0; i < tokenCount; i++) {
+        if (tokens[i].status == 0)        {
+            fprintf(file, "erro lexico linha %d: %s\n", tokens[i].linha,tokens[i].lexema);
+        }
+    }
+    for (int i = 0; i < linha_analisada; i++) {
+        if (comandos[i].status == 0)        {
+            fprintf(file, "erro sintatico linha %d: %s sugestão: %s\n", comandos[i].linha,comandos[i].msgErro,comandos[i].cmdEsperado);
+        }
+    }
+
     fclose(file);
 }
 
@@ -36,6 +57,7 @@ int main() {
     fclose(arquivo);
 
     imprimeTokens(tokens, tokenCount);
+    imprimeTokensT2(tokens, tokenCount);
 
     return 0;
 }

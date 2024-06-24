@@ -1,0 +1,2 @@
+erro sintatico linha 4: faltou THEN sugestão: IF condicao THEN
+erro sintatico linha 6: Faltou ponto sugestão: END.

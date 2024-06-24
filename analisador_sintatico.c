@@ -6,6 +6,19 @@ void erro_parenteses(){
     }
 }
 
+void addSintToken(char *msgErro, char *cmdEsperado, int status){
+    
+    if (linha_analisada < MAX_TOKENS) {
+        strncpy(comandos[linha_analisada].msgErro, msgErro, sizeof(comandos[linha_analisada].msgErro) - 1);
+        strncpy(comandos[linha_analisada].cmdEsperado, cmdEsperado, sizeof(comandos[linha_analisada].cmdEsperado) - 1);
+        comandos[linha_analisada].linha = linha_analisada;
+        comandos[linha_analisada].status = status;
+        linha_analisada++;
+    } else {
+        printf("Erro: numero maximo de tokens excedido.\n");
+    }
+}
+
 int var_c(int *cont){
     (*cont)++;
     int chave = 0;
@@ -17,20 +30,21 @@ int var_c(int *cont){
             if(strcmp(tokens[*cont].token, "numero") == 0){
                 (*cont)++;
             }else{
-                printf("erro sintatico 1\n");
+                addSintToken("Faltou numero atribuido a constante", "CONST ident := numero;", 0);
                 return ERRO;//erro
             }
         }else{
-            printf("erro sintatico 2\n");
+            addSintToken("Faltou simbolo de atribuicao", "CONST ident := numero;", 0);
             return ERRO;//erro
         }
     }
 
 
     if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0 && chave){
+        addSintToken("", "CONST ident := numero;", 1);
         return SUCESSO;
     }else{
-        printf("erro sintatico 3\n");
+        addSintToken("Faltou ponto e virgula", "CONST ident := numero;", 0);
         return ERRO;//erro
     }
 }
@@ -42,10 +56,11 @@ int var_v(int *cont){
         (*cont)++;
         chave = 1;
     }
-    if(chave && (strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){   
+    if(chave && (strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){ 
+        addSintToken("", "VAR ident", 1);
         return SUCESSO;
     }else{
-        printf("erro sintatico 4\n");
+        addSintToken("Faltou ponto e virgula", "VAR ident;", 0);
         return ERRO;
     }
 }
@@ -61,11 +76,11 @@ void var_p(int *cont){
     }
 
     if(chave && (strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){
-        //sintatico(); isso vai me dar dor de cabeça
+        addSintToken("", "PROCEDURE ident", 1);
+        bloco(cont);
         return SUCESSO;
-        printf("entrou var_p com sucesso\n");
     }else{
-        printf("erro sintatico 5\n");
+        addSintToken("Faltou ponto e virgula", "PROCEDURE ident;", 0);
         return ERRO;//erro
     }
 }
@@ -193,10 +208,7 @@ int condicao(int *cont){
     }
 
     if(chave == 1){
-        printf("expressao condicao expressao ");
         expressao(cont);
-    }else{
-        printf("expressao ");
     }
     
     erro_parenteses();
@@ -206,7 +218,6 @@ int condicao(int *cont){
 }
 
 int cmd(int *cont, int *chave){
-    
     //(*cont)++;
 
     //ident := expressão
@@ -216,80 +227,81 @@ int cmd(int *cont, int *chave){
             expressao(cont);
             erro_parenteses();
             if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){   
-                printf("ident := expressao;\n");
-                
+                addSintToken("", "ident := expressao;", 1);                
                 (*cont)++;
             }else{
-                printf("erro sintatico 7\n");
+                addSintToken("faltou ponto e virgula", "ident := expressao;",  0); 
             }
             // (*cont)++;
         }else{
-            printf("erro sintatico 6\n");
+            addSintToken("faltou simbolo de atribuicao", "ident := expressao;",  0);
             (*cont++);
         }
     }else if(strcmp(tokens[*cont].token, "simbolo_CALL") == 0){
         (*cont)++;
         if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
             (*cont)++;
-            if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){       
-                printf("call ident\n");
+            if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){     
+                addSintToken("", "call ident;", 1);  
                 (*cont)++;
             }else{
-                printf("erro sintatico 9\n");
+                addSintToken("faltou ponto e virgula", "CALL ident;", 0); 
                 (*cont)++;
             }
         }else{
-            printf("erro sintatico 8\n");
+            addSintToken("faltou identificador", "CALL ident;", 0);
         }
     }else if(strcmp(tokens[*cont].token, "IF") == 0){
-        printf("%s ", tokens[*cont].token);
         condicao(cont);
 
         if(strcmp(tokens[*cont].token, "THEN") == 0){
-            printf("%s\n", tokens[*cont].token);
+            addSintToken("", "IF condicao THEN", 1);
             (*cont)++;
+            
             if(strcmp(tokens[*cont].token, "BEGIN") == 0){ 
-                printf("%s\n", tokens[*cont].token);
+            addSintToken("", "BEGIN", 1);
                 (*cont)++;
                 (*chave)++;
+                
                 cmd(cont, chave);
             }else{
-                printf("erro sintatico 12\n");
+                addSintToken("faltou BEGIN", "BEGIN", 0);
                 (*cont)++;
             }
         }else{
-            printf("erro sintatico 10\n");
+            addSintToken("faltou THEN", "IF condicao THEN", 0);
             (*cont)++;
         }
     }else if(strcmp(tokens[*cont].token, "WHILE") == 0){
-        printf("%s ", tokens[*cont].token);
         condicao(cont);
 
         if(strcmp(tokens[*cont].token, "DO") == 0){
-            printf("%s\n", tokens[*cont].token);
+            addSintToken("", "WHILE condicao DO", 1);
             (*cont)++;
+            
             if(strcmp(tokens[*cont].token, "BEGIN") == 0){ 
-                printf("%s\n", tokens[*cont].token);
+            addSintToken("", "BEGIN", 1);
                 (*cont)++;
                 (*chave)++;
                 cmd(cont, chave);
             }else{
-                printf("erro sintatico 13\n");
+                addSintToken("faltou BEGIN", "BEGIN", 0);
                 (*cont)++;
             }
         }else{
-            printf("erro sintatico 11\n");
+                addSintToken("faltou DO", "While condicao DO", 0);
             (*cont)++;
         }
     }else if(strcmp(tokens[*cont].token, "<ERRO_COMENT>") == 0){
-        printf("erro de comentario\n");
+        addSintToken("faltou fechar comentario", "{}",  0);
         (*cont)++;
     }else if(strcmp(tokens[*cont].token, "END") == 0 && *chave > 0){
-        printf("%s\n", tokens[*cont].token);
+        addSintToken("", "END", 1);
         (*chave)--;
         (*cont)++;
         return SUCESSO;
     }else if(strcmp(tokens[*cont].token, "END") == 0 && *chave == 0){
+        addSintToken("", "END",1);
         (*chave)--;
         return SUCESSO;
     }else{
@@ -297,16 +309,17 @@ int cmd(int *cont, int *chave){
     }
 }
 
-int sintatico(int *num_token){
-    
+int bloco(int *num_token){
+
     declaracao(num_token);
     int chave_recursividade = 0;
 
     if(strcmp(tokens[*num_token].token, "BEGIN") == 0){
-        printf("%s\n", tokens[*num_token].token);
+        addSintToken("", "BEGIN", 1);
         (*num_token)++;
     }else{
         printf("erro sintatico faltou BEGIN\n");
+        addSintToken("Faltou BEGIN", "BEGIN", 0);
         // chave_recursividade++;
         (*num_token)++;
         //return ERRO;
@@ -315,26 +328,62 @@ int sintatico(int *num_token){
         cmd(num_token, &chave_recursividade);
         if(strcmp(tokens[*num_token].token, "simbolo_ponto") == 0){
             printf("erro sintatico faltou um END\n");
+            addSintToken("Erro Sintatico", "Faltou END", 0);
             //return ERRO;
         }
     }
 
 
     if(strcmp(tokens[*num_token].token, "END") == 0){
-        printf("%s\n", tokens[*num_token].token);
         (*num_token)++;
         if (strcmp(tokens[*num_token].token, "simbolo_ponto") == 0) {
-            printf("fim do codigo\n");
+        addSintToken("", "END.", 1);
             return SUCESSO;
         }else{
-            printf("erro sintatico\n");
+        addSintToken("Faltou ponto", "END.", 0);
             return ERRO;  
         }
     }
-        
+    
+
+}
+
+int sintatico(int *num_token){
+    linha_analisada = 0;
+    bloco(num_token);
+    // declaracao(num_token);
+    // int chave_recursividade = 0;
+
+    // if(strcmp(tokens[*num_token].token, "BEGIN") == 0){
+    //     addSintToken("", "BEGIN", linha_analisada, 1);
+    //     (*num_token)++;
     // }else{
-    //     printf("erro sintatico\n");
-    //     return ERRO;
+    //     printf("erro sintatico faltou BEGIN\n");
+    //     addSintToken("Faltou BEGIN", "BEGIN", linha_analisada, 0);
+    //     // chave_recursividade++;
+    //     (*num_token)++;
+    //     //return ERRO;
     // }
+    // while (/*strcmp(tokens[*num_token].token, "END") != 0 && */chave_recursividade != -1){  
+    //     cmd(num_token, &chave_recursividade);
+    //     if(strcmp(tokens[*num_token].token, "simbolo_ponto") == 0){
+    //         printf("erro sintatico faltou um END\n");
+    //         addSintToken("Erro Sintatico", "Faltou END", linha_analisada, 0);
+    //         //return ERRO;
+    //     }
+    // }
+
+
+    if(strcmp(tokens[*num_token].token, "END") == 0){
+        (*num_token)++;
+        if (strcmp(tokens[*num_token].token, "simbolo_ponto") == 0) {
+        addSintToken("", "END.",1);
+            return SUCESSO;
+        }else{
+        addSintToken("Faltou ponto", "END.",0);
+            return ERRO;  
+        }
+    }
+    
 
 }
