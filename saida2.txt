@@ -1,2 +1,6 @@
-erro sintatico linha 4: faltou THEN sugestão: IF condicao THEN
-erro sintatico linha 6: Faltou ponto sugestão: END.
+erro lexico linha 5: f@t
+erro lexico linha 7: =>
+erro lexico linha 12: {testando comentário não fechado
+
+erro sintatico linha 2: Faltou BEGIN sugestão: BEGIN
+erro sintatico linha 10: faltou fechar comentario sugestão: {}

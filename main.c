@@ -29,7 +29,7 @@ void imprimeTokensT2(Token tokens[], int tokenCount) {
             fprintf(file, "erro lexico linha %d: %s\n", tokens[i].linha,tokens[i].lexema);
         }
     }
-    for (int i = 0; i < linha_analisada; i++) {
+    for (int i = 0; i < termo_Analisado; i++) {
         if (comandos[i].status == 0)        {
             fprintf(file, "erro sintatico linha %d: %s sugestão: %s\n", comandos[i].linha,comandos[i].msgErro,comandos[i].cmdEsperado);
         }
