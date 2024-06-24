@@ -7,7 +7,7 @@
 #include "analisador_sintatico.h"
 
 void imprimeTokens(Token tokens[], int tokenCount) {
-    FILE *file = fopen("saida.txt", "w");
+    FILE *file = fopen("saida trabalho 1.txt", "w");
     if (file == NULL) {
         printf("Erro ao abrir o arquivo de saida\n");
         return;
@@ -21,7 +21,7 @@ void imprimeTokens(Token tokens[], int tokenCount) {
 }
 
 void imprimeTokensT2(Token tokens[], int tokenCount) {
-    FILE *file = fopen("saida2.txt", "w");
+    FILE *file = fopen("saida oficial.txt", "w");
     if (file == NULL) {
         printf("Erro ao abrir o arquivo de saida\n");
         return;
