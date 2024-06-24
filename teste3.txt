@@ -1,7 +1,7 @@
 VAR a;
 BEGIN
 	CALL a;
-    y := 30;
+    y := 300;
     IF x = + THEN
         BEGIN
         a := 4;

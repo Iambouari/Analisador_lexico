@@ -9,7 +9,7 @@ void erro_parenteses(){
 int var_c(int *cont){
     (*cont)++;
     int chave = 0;
-    while(strcmp(tokens[*cont].token, "ident") == 0){
+    while(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
         chave = 1;
         (*cont)++;
         if(strcmp(tokens[*cont].token, "simbolo_atribuicao") == 0){
@@ -38,7 +38,7 @@ int var_c(int *cont){
 int var_v(int *cont){
     (*cont)++;
     int chave = 0;
-    while(strcmp(tokens[*cont].token, "ident") == 0){
+    while(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
         (*cont)++;
         chave = 1;
     }
@@ -54,7 +54,7 @@ void var_p(int *cont){
     (*cont)++;
     int chave = 0;
 
-    if(strcmp(tokens[*cont].token, "ident") == 0){
+    if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
         printf("%s %d", tokens[*cont].token, *cont);
         (*cont)++;
         chave = 1;
@@ -94,7 +94,7 @@ int expressao_recursiva(int *cont){
     strcmp(tokens[*cont].token, "simbolo_dividir") == 0){
 
         (*cont)++;
-        if(strcmp(tokens[*cont].token, "ident") == 0){
+        if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
             (*cont)++;
         }
 
@@ -128,7 +128,7 @@ int expressao(int *cont){
         (*cont)++;
     }
     
-    if(strcmp(tokens[*cont].token, "ident") == 0){
+    if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
         aux_sinal = 0;
         (*cont)++;
     }
@@ -227,12 +227,9 @@ int cmd(int *cont, int *chave){
             printf("erro sintatico 6\n");
             (*cont++);
         }
-    }
-
-    //call ident
-    if(strcmp(tokens[*cont].token, "simbolo_CALL") == 0){
+    }else if(strcmp(tokens[*cont].token, "simbolo_CALL") == 0){
         (*cont)++;
-        if(strcmp(tokens[*cont].token, "ident") == 0){
+        if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
             (*cont)++;
             if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){       
                 printf("call ident\n");
@@ -244,10 +241,7 @@ int cmd(int *cont, int *chave){
         }else{
             printf("erro sintatico 8\n");
         }
-    }
-
-    //if condicao THEN comando
-    if(strcmp(tokens[*cont].token, "IF") == 0){
+    }else if(strcmp(tokens[*cont].token, "IF") == 0){
         printf("%s ", tokens[*cont].token);
         condicao(cont);
 
@@ -267,10 +261,7 @@ int cmd(int *cont, int *chave){
             printf("erro sintatico 10\n");
             (*cont)++;
         }
-    }
-
-    //while condicao DO comando
-    if(strcmp(tokens[*cont].token, "WHILE") == 0){
+    }else if(strcmp(tokens[*cont].token, "WHILE") == 0){
         printf("%s ", tokens[*cont].token);
         condicao(cont);
 
@@ -290,10 +281,10 @@ int cmd(int *cont, int *chave){
             printf("erro sintatico 11\n");
             (*cont)++;
         }
-    }
-
-
-    if(strcmp(tokens[*cont].token, "END") == 0 && *chave > 0){
+    }else if(strcmp(tokens[*cont].token, "<ERRO_COMENT>") == 0){
+        printf("erro de comentario\n");
+        (*cont)++;
+    }else if(strcmp(tokens[*cont].token, "END") == 0 && *chave > 0){
         printf("%s\n", tokens[*cont].token);
         (*chave)--;
         (*cont)++;
@@ -301,6 +292,8 @@ int cmd(int *cont, int *chave){
     }else if(strcmp(tokens[*cont].token, "END") == 0 && *chave == 0){
         (*chave)--;
         return SUCESSO;
+    }else{
+        (*cont)++;
     }
 }
 
