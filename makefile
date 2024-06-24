@@ -15,10 +15,16 @@ analisador_arquivo.o: analisador_arquivo.c analisador_arquivo.h
 analisador_sintatico.o: analisador_sintatico.c analisador_sintatico.h
 	gcc -c analisador_sintatico.c -o analisador_sintatico.o
 
+debug: CFLAGS += -g
+debug: programa-debug
+
+programa-debug: main.o analisador_lexico.o analisador_arquivo.o analisador_sintatico.o
+	gdb $(CFLAGS) -o programa-debug main.o analisador_lexico.o analisador_arquivo.o analisador_sintatico.o
+
 run: programa
 	./programa
 
 clean:
-	rm programa main.o analisador_lexico.o analisador_arquivo.o analisador_sintatico
+	rm -f programa programa-debug main.o analisador_lexico.o analisador_arquivo.o analisador_sintatico.o
 
-.PHONY: all run clean
+.PHONY: all run clean debug

@@ -7,7 +7,9 @@ a, ident
 ;, simbolo_ponto_virgula
 y, ident
 :=, simbolo_atribuicao
+3, numero
 +, simbolo_mais
+2, numero
 ;, simbolo_ponto_virgula
 IF, IF
 y, ident

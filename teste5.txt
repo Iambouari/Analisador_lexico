@@ -1,0 +1,5 @@
+VAR a;
+BEGIN
+    y := 3;
+    x := 4;
+END.

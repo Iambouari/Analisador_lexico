@@ -127,11 +127,16 @@ void automatoNumero(const char* aux, int num_linha) {
     }
 }
 
+
 void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
     int s = 0;
     int flag = 1;
     int i = posicao;
     char c_aux;
+    
+    char improviso[2];
+
+    printf("%s", linha);
 
     while (flag) {
         c_aux = linha[i];
@@ -140,11 +145,21 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
             case 0:
                 if (c_aux == ':') {
                     s = 1;
+                    if(linha[i - 1] == '='){
+                        return;
+                    }
                 } else if (c_aux == '<') {
                     s = 4;
+                    if(linha[i - 1] == '='){
+                        return;
+                    }
                 } else if (c_aux == '=') {
                     if (linha[i - 1] != ':' && linha[i - 1] != '<' && linha[i - 1] != '>') {
                         s = 8;
+                        if(linha[i + 1] == '<' || linha[i + 1] == '>' || linha[i + 1] == '=' || linha[i + 1] == ':'){
+                            printf("entrou aqui");
+                            s = 21;
+                        }
                     }
                     else{
                         return;
@@ -154,6 +169,9 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                         s = 9;
                     }
                     else{
+                        return;
+                    }
+                    if(linha[i - 1] == '='){
                         return;
                     }
                 } else if (c_aux == '/') {
@@ -175,6 +193,7 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 } else if (c_aux == ')') {
                     s = 20;
                 }
+
                 break;
 
             case 1:
@@ -287,7 +306,16 @@ void automatoOperadores(char c, const char* linha, int num_linha, int posicao) {
                 flag = 0;
                 break;
 
+            case 21:
+                improviso[0] = linha[i-1];
+                improviso[1] = linha[i];
+                improviso[2] = '\0';
+                addToken(tokens, &tokenCount, improviso, "simbolo_inexistente", num_linha, 0);
+                flag = 0;
+                break;
+
             default:
+                printf("entrou auqi\n");
                 flag = 0;
                 break;
         }

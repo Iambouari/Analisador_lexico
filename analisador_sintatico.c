@@ -188,6 +188,8 @@ int condicao(int *cont){
         chave = 1;
     }else if(strcmp(tokens[(*cont)].token, "simbolo_maior") == 0){
         chave = 1;
+    }else if(strcmp(tokens[(*cont)].token, "simbolo_inexistente") == 0){
+        chave = 1;
     }
 
     if(chave == 1){
@@ -215,6 +217,7 @@ int cmd(int *cont, int *chave){
             erro_parenteses();
             if(strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0){   
                 printf("ident := expressao;\n");
+                
                 (*cont)++;
             }else{
                 printf("erro sintatico 7\n");

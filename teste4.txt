@@ -1,7 +1,7 @@
 VAR a;
 BEGIN
 	CALL a;
-    y := +;
+    y := 3 + 2;
     IF y < 3 THEN
         BEGIN
         END
