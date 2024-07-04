@@ -1,0 +1,15 @@
+VAR n, fat;
+PROCEDURE fatorial;
+BEGIN
+	fat:=1.2;
+	WHILE n>1 DO
+		BEGIN
+		fat:=fat*n
+		n:=n-1;
+		END
+END
+BEGIN
+	n:=4;
+	CALL fatorial;
+END.
+{comentario nao fechado...

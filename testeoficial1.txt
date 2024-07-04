@@ -1,0 +1,6 @@
+VAR x,y;
+BEGIN
+	x:=2;
+	y:=3;
+	z:=x+y;
+END.

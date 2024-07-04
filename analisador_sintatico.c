@@ -47,10 +47,13 @@ int var_c(int *cont){
                 }
             }else{
                 addSintToken("Faltou numero atribuido a constante", "CONST ident := numero;", 0, 1);
+                (*cont)++;
                 return ERRO;//erro
             }
         }else{
             addSintToken("Faltou simbolo de atribuicao", "CONST ident := numero;", 0, 1);
+            (*cont)++;
+            (cont)++;
             return ERRO;//erro
         }
     }
@@ -84,9 +87,11 @@ int var_v(int *cont){
     if((strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){ 
         if(chave){
             addSintToken("", "VAR ident;", 1, 1);
+            // (*cont)++;
             return SUCESSO;
         }else{
             addSintToken("Faltou ident", "VAR ident;", 0, 1);
+            (*cont)++;
         }
     }else{
         addSintToken("Faltou ponto e virgula", "VAR ident;", 0, 1);
@@ -99,7 +104,6 @@ void var_p(int *cont){
     int chave = 0;
 
     if(strcmp(tokens[*cont].token, "ident") == 0 || strcmp(tokens[*cont].token, "<ERRO_LEXICO>") == 0){
-        printf("%s %d", tokens[*cont].token, *cont);
         (*cont)++;
         chave = 1;
     }
@@ -107,6 +111,7 @@ void var_p(int *cont){
     if(chave && (strcmp(tokens[*cont].token, "simbolo_ponto_virgula") == 0)){
         addSintToken("", "PROCEDURE ident", 1, 1);
         statusProcedimento = 1;
+        (*cont)++;
         bloco(cont);
         return SUCESSO;
     }else{
@@ -116,13 +121,16 @@ void var_p(int *cont){
 }
 
 void declaracao(int *i){
+    int chave = 0;
     if(strcmp(tokens[*i].token, "CONST") == 0){//nao sei pq mas ta chamando essa porra duas vezes
         var_c(i);
         (*i)++;
     }
     if(strcmp(tokens[*i].token, "VAR") == 0){
-        var_v(i);
+        chave = var_v(i);
+
         (*i)++;
+        
     }
     if(strcmp(tokens[*i].token, "PROCEDURE") == 0){
         var_p(i);
@@ -346,6 +354,7 @@ int cmd(int *cont, int *chave){
 
 int bloco(int *num_token){
 
+
     declaracao(num_token);
     int chave_recursividade = 0;
 
@@ -354,7 +363,6 @@ int bloco(int *num_token){
         (*num_token)++;
         chave_recursividade++;
     }else{
-        printf("erro sintatico faltou BEGIN\n");
         addSintToken("Faltou BEGIN", "BEGIN", 0, 1);
         chave_recursividade++;
         (*num_token)++;
@@ -363,7 +371,6 @@ int bloco(int *num_token){
     while (/*strcmp(tokens[*num_token].token, "END") != 0 &&*/ chave_recursividade != 0){  
         cmd(num_token, &chave_recursividade);
         if(strcmp(tokens[*num_token].token, "simbolo_ponto") == 0){
-            printf("erro sintatico faltou um END\n");
             addSintToken("Erro Sintatico", "Faltou END", 0, 1);
             //return ERRO;
         }

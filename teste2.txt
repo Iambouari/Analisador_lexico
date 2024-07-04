@@ -1,5 +1,5 @@
 VAR n, fat;
-BGIN {erro em palavra chave}
+BEGIN {erro em palavra chave}
 	n:=4;
 	{erro em identificador de variável}
 	f@t :=1;

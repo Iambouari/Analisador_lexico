@@ -1,0 +1,4 @@
+erro lexico linha 15: {comentario nao fechado...
+erro lexico linha 15: vS•
+erro lexico linha 15: ı
+erro sintatico linha 7: faltou ponto e virgula sugest√£o: ident := expressao;

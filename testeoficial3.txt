@@ -1,0 +1,13 @@
+VAR x, y;
+
+BEGIN
+	a:=x;
+	b:=y;
+	c:=a+b
+END;
+
+BEGIN
+	x:=2;
+	y:=3;
+	CALL soma
+END.
